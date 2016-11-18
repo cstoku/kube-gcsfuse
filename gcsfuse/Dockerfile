@@ -17,7 +17,6 @@ ENV RUN_DEPS \
 
 ENV GOPATH /tmp/go
 ENV GO15VENDOREXPERIMENT 1
-ENV GOOGLE_APPLICATION_CREDENTIALS /etc/gcs/credential
 
 RUN set -xe && \
     apk add --no-cache $BUILD_DEPS $RUN_DEPS && \
