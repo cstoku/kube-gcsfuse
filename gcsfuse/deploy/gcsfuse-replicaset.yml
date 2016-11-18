@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+    matchExpressions:
+      - {key: tier, operator: In, values: [frontend]}
+  template:
+    metadata:
+      labels:
+        app: gcsfuse
+        tier: frontend
+    spec:
+      containers:
+        - name: gcsfuse
+          image: gcr.io/gpn-infra-sandbox/gcstest/gcsfuse
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          env:
+            - name: GCS_BUCKET_NAME
+              value: gpn-bucket
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /etc/gcs/credential
+          ports:
+            - containerPort: 80
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: cred
+              mountPath: /etc/gcs
+      volumes:
+        - name: cred
+          secret:
+            secretName: gcs-secret
+            defaultMode: 256
+
