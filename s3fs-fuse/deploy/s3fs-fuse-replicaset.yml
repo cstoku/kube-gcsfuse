@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: frontend
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      tier: frontend
+    matchExpressions:
+      - {key: tier, operator: In, values: [frontend]}
+  template:
+    metadata:
+      labels:
+        app: s3fs-fuse
+        tier: frontend
+    spec:
+      containers:
+        - name: s3fs-fuse
+          image: gcr.io/gpn-infra-sandbox/gcstest/s3fs-fuse
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          env:
+            - name: GCS_BUCKET_NAME
+              value: gpn-bucket
+            - name: GCS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gcs-secret
+                  key: access_key
+            - name: GCS_ACCESS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gcs-secret
+                  key: access_secret
+          ports:
+            - containerPort: 80
+          securityContext:
+            privileged: true
+

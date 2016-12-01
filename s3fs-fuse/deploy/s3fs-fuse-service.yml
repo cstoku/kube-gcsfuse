@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata: 
+  name: frontend-service
+spec: 
+  selector: 
+    app: s3fs-fuse
+  ports: 
+  - protocol: TCP
+    port: 80
+  type: LoadBalancer
